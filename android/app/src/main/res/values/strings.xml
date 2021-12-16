@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_channel_id">Default channel</string>
+    <string name="incoming_message">đang gọi cho bạn</string>
+    <string name="action_accept">Chấp nhận</string>
+    <string name="action_decline">Từ chối</string>
+    <string name="message_call_secured">Cuộc gọi của bạn được bảo mật.</string>
+</resources>

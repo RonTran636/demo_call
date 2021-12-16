@@ -1,0 +1,33 @@
+PODS:
+  - Flutter (1.0.0)
+  - GoogleWebRTC (1.1.31999)
+  - Stringee (1.7.13):
+    - GoogleWebRTC (= 1.1.31999)
+  - stringee_flutter_plugin (0.0.1):
+    - Flutter
+    - Stringee (~> 1.7.3)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - stringee_flutter_plugin (from `.symlinks/plugins/stringee_flutter_plugin/ios`)
+
+SPEC REPOS:
+  trunk:
+    - GoogleWebRTC
+    - Stringee
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  stringee_flutter_plugin:
+    :path: ".symlinks/plugins/stringee_flutter_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
+  Stringee: 77f163e7254764f57b47b8e77abb78ff299b9503
+  stringee_flutter_plugin: d8ac411492f732783d973cb15becffb94d2551d9
+
+PODFILE CHECKSUM: cf0c950f7e9a456b4e325f5b8fc0f98906a3705a
+
+COCOAPODS: 1.11.2

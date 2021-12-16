@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_blur">#007190</color>
+    <color name="background_blur_85">#d9007190</color>
+    <color name="secondary_color">#E0F3F7</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="accent_red">#F44336</color>
+    <color name="accent_white">#FFFFFF</color>
+    <color name="accent_green">#61D773</color>
+    <color name="red_500">#F0224F</color>
+    <color name="disabled_text">#B6BDCB</color>
+</resources>

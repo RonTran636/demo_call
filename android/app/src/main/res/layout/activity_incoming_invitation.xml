@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ContentDescription"
+    tools:context=".IncomingInvitationActivity">
+    <data >
+        <variable
+            name="callerName"
+            type="String" />
+        <variable
+            name="meetingType"
+            type="String"
+            />
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/incoming_background_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:src="@drawable/avatar_test_2"
+            android:scaleType="centerCrop" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/incoming_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_blur_85">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/incoming_caller_avatar"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/avatar_test_2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.2"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CornerSize50Percent"
+                app:strokeColor="#000000"
+                app:strokeWidth="1dp" />
+
+            <TextView
+                android:id="@+id/incoming_caller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Bs.Huynh Trung Hai"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_large_size"
+                app:layout_constraintEnd_toEndOf="@+id/incoming_caller_avatar"
+                app:layout_constraintStart_toStartOf="@+id/incoming_caller_avatar"
+                app:layout_constraintTop_toBottomOf="@+id/incoming_caller_avatar" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/incoming_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/incoming_message"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_small_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/incoming_caller_name" />
+
+            <ImageView
+                android:id="@+id/incoming_caller_reject"
+                android:layout_width="@dimen/round_button_radius"
+                android:layout_height="@dimen/round_button_radius"
+                android:layout_marginHorizontal="25dp"
+                android:background="@drawable/button_circular"
+                android:backgroundTint="@color/red_500"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_clear"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/guideline2"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CornerSize50Percent"
+                app:tint="@color/accent_white" />
+
+
+
+
+            <ImageView
+                android:id="@+id/incoming_caller_accept"
+                android:layout_width="@dimen/round_button_radius"
+                android:layout_height="@dimen/round_button_radius"
+                android:layout_marginHorizontal="25dp"
+                android:background="@drawable/button_circular"
+                android:backgroundTint="@color/secondary_color"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="15dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_local_phone"
+                android:tint="@color/background_blur"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toTopOf="@+id/guideline2"
+                tools:ignore="UseAppTint" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/action_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/action_accept"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_small_size"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/incoming_caller_accept"
+                app:layout_constraintStart_toStartOf="@+id/incoming_caller_accept"
+                app:layout_constraintTop_toBottomOf="@+id/incoming_caller_accept" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/action_decline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/action_decline"
+                android:textColor="@color/white"
+                android:layout_marginTop="8dp"
+                android:textSize="@dimen/text_small_size"
+                app:layout_constraintEnd_toEndOf="@+id/incoming_caller_reject"
+                app:layout_constraintStart_toStartOf="@+id/incoming_caller_reject"
+                app:layout_constraintTop_toBottomOf="@+id/incoming_caller_reject" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/message_call_secured"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/message_call_secured"
+                android:maxLines="1"
+                android:textColor="@color/disabled_text"
+                android:textSize="@dimen/text_small_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/action_decline" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.65" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.50" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+</layout>
