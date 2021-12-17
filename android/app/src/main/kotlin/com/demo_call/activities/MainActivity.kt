@@ -1,46 +1,44 @@
 package com.demo_call.activities
 
-import android.content.Context
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.NonNull
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.gson.Gson
+import androidx.lifecycle.*
 import com.demo_call.CALL_CHANNEL_METHOD
 import com.demo_call.CHANNEL_NAME
 import com.demo_call.utils.Common
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import com.stringee.StringeeClient
+import com.stringee.call.StringeeCall
+import com.stringee.call.StringeeCall2
+import com.stringee.exception.StringeeError
+import com.stringee.listener.StatusListener
+import com.stringee.listener.StringeeConnectionListener
 import com.studyguide.mightyid.models.LocalRequestCall
-import com.studyguide.mightyid.models.RequestCall
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.StringCodec
+import org.json.JSONObject
+
 
 const val CALL_CHANNEL_ID = "calls_channel_id"
 const val CALL_CHANNEL_NAME = "Calls"
 
 class MainActivity : FlutterActivity(), LifecycleObserver {
 
-    private lateinit var tokenChannel: MethodChannel
-
     companion object {
-        var messageChannel: BasicMessageChannel<String>? = null
-        var callActionResult: MethodChannel.Result? = null
         var isBackground = true
-        var callMethodChannel: MethodChannel? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        initAndConnectStringee()
     }
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
@@ -54,59 +52,36 @@ class MainActivity : FlutterActivity(), LifecycleObserver {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        messageChannel = BasicMessageChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CHANNEL_NAME,
-            StringCodec.INSTANCE
-        )
-        messageChannel!!.setMessageHandler { message, _ ->
-            Log.d("MainActivity", "configureFlutterEngine: $message")
-        }
-
-        setupCallMethodChannel(flutterEngine)
-
-        setupTokenChannel(flutterEngine)
-
     }
 
-    private fun setupCallMethodChannel(flutterEngine: FlutterEngine) {
-        callMethodChannel = MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            CALL_CHANNEL_METHOD
-        )
-        callMethodChannel!!.setMethodCallHandler { call, result ->
-            when (call.method) {
-                "start_call" -> {
-                    val payload = Gson().fromJson(
-                        call.argument("payload") as String?,
-                        LocalRequestCall::class.java
-                    )
-                    Log.d("MainActivity", "setupCallMethodChannel: payload: $payload")
-                    callActionResult = result
-                }
+    fun initAndConnectStringee(){
+        val client = StringeeClient(this)
+        client.setConnectionListener(object : StringeeConnectionListener{
+            override fun onConnectionConnected(p0: StringeeClient?, p1: Boolean) {
             }
-        }
-    }
 
-    private fun setupTokenChannel(flutterEngine: FlutterEngine) {
-        tokenChannel = MethodChannel(
-            flutterEngine.dartExecutor.binaryMessenger,
-            "com.studyguide.mightyid/token"
-        )
-        tokenChannel.setMethodCallHandler { call, result ->
-            when (call.method) {
-                "sendToken" -> {
-                    Common.customerId = call.argument("customer_id")
-                    Common.token = call.argument("token")
-                    val dataSave = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                    val editor: SharedPreferences.Editor = dataSave.edit()
-                    editor.putInt("customer_id", Common.customerId!!)
-                    editor.putString("token", Common.token)
-                    editor.apply()
-                    result.success(null)
-                }
+            override fun onConnectionDisconnected(p0: StringeeClient?, p1: Boolean) {
             }
-        }
+
+            override fun onIncomingCall(p0: StringeeCall?) {
+                Log.d("TAG", "onIncomingCall: stringee data: $p0")
+            }
+
+            override fun onIncomingCall2(p0: StringeeCall2?) {
+            }
+
+            override fun onConnectionError(p0: StringeeClient?, p1: StringeeError?) {
+            }
+
+            override fun onRequestNewToken(p0: StringeeClient?) {
+            }
+
+            override fun onCustomMessage(p0: String?, p1: JSONObject?) {
+            }
+
+            override fun onTopicMessage(p0: String?, p1: JSONObject?) {
+            }
+        })
     }
 }
 

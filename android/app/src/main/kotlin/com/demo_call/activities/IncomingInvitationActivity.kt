@@ -23,15 +23,16 @@ import com.demo_call.*
 import com.demo_call.databinding.ActivityIncomingInvitationBinding
 import com.studyguide.mightyid.*
 import com.demo_call.notifications.NotificationReceiver
-import com.studyguide.mightyid.models.RequestCall
-import com.demo_call.IntentUtils.getInfoExtra
-import com.demo_call.IntentUtils.putInfoExtra
+import com.demo_call.utils.IntentUtils.getInfoExtra
+import com.demo_call.utils.IntentUtils.putInfoExtra
+import com.demo_call.models.RequestCall
+import com.demo_call.models.StringeePayload
 
 class IncomingInvitationActivity : Activity() {
     private lateinit var localBroadcastManager: LocalBroadcastManager
     private lateinit var binding: ActivityIncomingInvitationBinding
     private val broadcastReceiver = NotificationReceiver()
-    private var payload: RequestCall? = null
+    private var payload: StringeePayload? = null
     private var callId: String? = null
     private var meetingType: String? = null
     private var callerName: String? = null
@@ -44,7 +45,6 @@ class IncomingInvitationActivity : Activity() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_incoming_invitation)
-
         processIncomingData(intent)
         initUI()
         registerCallStateReceiver()
@@ -53,7 +53,7 @@ class IncomingInvitationActivity : Activity() {
     override fun onStart() {
         super.onStart()
         Handler(Looper.myLooper()!!).postDelayed({
-            if (payload!!.response == null) {
+            if (payload == null) {
                 finish()
             }
         }, 60000)

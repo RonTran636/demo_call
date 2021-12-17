@@ -6,30 +6,39 @@ import android.content.Intent
 import android.util.Log
 import com.demo_call.*
 import com.demo_call.activities.cancelNotification
-import com.studyguide.mightyid.models.RequestCall
-import com.demo_call.IntentUtils.getInfoExtra
+import com.demo_call.utils.IntentUtils.getInfoExtra
+import com.demo_call.models.RequestCall
+import com.demo_call.models.StringeePayload
+import com.stringee.StringeeClient
+import com.stringee.call.StringeeCall
+import com.stringee.call.StringeeCall2
 
 
 class NotificationReceiver : BroadcastReceiver() {
 
 
     override fun onReceive(context: Context, intent: Intent) {
-        val payload = intent.getInfoExtra<RequestCall>(CALL_PAYLOAD)
-//        retrieveCurrentAccountInfo(context)
+        val payload = intent.getInfoExtra<StringeePayload>(CALL_PAYLOAD)
+        val callId = intent.getStringExtra(CALL_ID)
+        val client = StringeeClient(context)
+        val callerUserId = payload.data.from.alias
+        val calleeUserId = payload.data.to.alias
+        val stringeeCall = StringeeCall(client, calleeUserId, callerUserId)
         when (intent.action) {
             CALL_STATE_ACCEPT, ACTION_CALL_ACCEPT -> {
                 Log.d("NotificationReceiver", "onReceive: CALL_STATE_ACCEPT, payload: $payload")
-                context.cancelNotification(payload.callId.hashCode())
+                context.cancelNotification(callId.hashCode())
                 // Handle connect call in Android's side
-//                sendResponseRequestCall(payload.callId!!.toInt(), payload.topicId!!, CALL_STATE_ACCEPT)
-//                startJitsiMeeting(context, payload)
+                print(stringeeCall.callId)
+
+                stringeeCall.answer()
             }
 
             CALL_STATE_REJECT, ACTION_CALL_REJECT -> {
                 Log.d("NotificationReceiver", "onReceive: CALL_STATE_REJECT, payload: $payload")
-                context.cancelNotification(payload.callId.hashCode())
+                context.cancelNotification(callId.hashCode())
                 // Handle reject call
-//                sendResponseRequestCall(payload.callId!!.toInt(), payload.topicId!!, CALL_STATE_REJECT)
+                stringeeCall.reject()
             }
         }
     }

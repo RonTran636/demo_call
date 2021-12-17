@@ -1,4 +1,4 @@
-package com.studyguide.mightyid.models
+package com.demo_call.models
 
 import com.google.gson.annotations.SerializedName
 

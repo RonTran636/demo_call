@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
-import 'call_page.dart';
+import 'call_page_2.dart';
 import 'constant.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,44 +19,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _client = StringeeClient();
   String _token = token1;
-
-  @override
-  void initState() {
-    //TODO: change token when switch device
-    _client.eventStreamController.stream.listen((event) {
-      Map<dynamic, dynamic> map = event;
-      switch (map['eventType']) {
-        case StringeeClientEvents.didConnect:
-          handleDidConnectEvent();
-          break;
-        case StringeeClientEvents.didDisconnect:
-          handleDidDisconnectEvent();
-          break;
-        case StringeeClientEvents.didFailWithError:
-          int code = map['body']['code'];
-          String msg = map['body']['message'];
-          handleDidFailWithErrorEvent(code, msg);
-          break;
-        case StringeeClientEvents.requestAccessToken:
-          handleRequestAccessTokenEvent();
-          break;
-        case StringeeClientEvents.didReceiveCustomMessage:
-          handleDidReceiveCustomMessageEvent(map['body']);
-          break;
-        case StringeeClientEvents.incomingCall:
-          StringeeCall call = map['body'];
-          handleIncomingCallEvent(call);
-          break;
-        case StringeeClientEvents.incomingCall2:
-          StringeeCall2 call = map['body'];
-          handleIncomingCall2Event(call);
-          break;
-        default:
-          break;
-      }
-    });
-    super.initState();
-  }
+  bool isConnected = false;
+  String message = "";
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +53,92 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
+          const SizedBox(height: 25),
+          ElevatedButton(
+              onPressed: () => connectToStringeeServer(_token),
+              child: const Text("Log in")),
+          const SizedBox(height: 8),
+          Visibility(visible: isConnected, child: Text(message)),
           const SizedBox(height: 40),
           ElevatedButton(
               onPressed: () {
-                _client.connect(_token).then((value) {
-                  print(value);
+                if (isConnected) {
                   Get.to(
                       () => CallPage(stringeeClient: _client, token: _token));
-                });
+                } else {
+                  null;
+                }
               },
               child: const Text("Start a call"))
         ],
       ),
     );
+  }
+
+  connectToStringeeServer(String token) {
+    _client.connect(token).then((value) {
+      if (value['message'] == 'Success') {
+        setState(() {
+          print(value);
+          isConnected = true;
+          registerForStringeeEvents(_client);
+          message = value['message'];
+          //Send fcm token or voip token to Stringee server
+          sendTokenToServer();
+        });
+      } else {
+        setState(() {
+          isConnected = true;
+          message = value['message'];
+        });
+      }
+    });
+  }
+
+  registerForStringeeEvents(StringeeClient stringeeClient) {
+    stringeeClient.eventStreamController.stream.listen((event) {
+      Map<dynamic, dynamic> map = event;
+      switch (map['eventType']) {
+        case StringeeClientEvents.didConnect:
+          handleDidConnectEvent();
+          break;
+        case StringeeClientEvents.didDisconnect:
+          handleDidDisconnectEvent();
+          break;
+        case StringeeClientEvents.didFailWithError:
+          int code = map['body']['code'];
+          String msg = map['body']['message'];
+          handleDidFailWithErrorEvent(code, msg);
+          break;
+        case StringeeClientEvents.requestAccessToken:
+          handleRequestAccessTokenEvent();
+          break;
+        case StringeeClientEvents.didReceiveCustomMessage:
+          handleDidReceiveCustomMessageEvent(map['body']);
+          break;
+        case StringeeClientEvents.incomingCall:
+          StringeeCall call = map['body'];
+          handleIncomingCallEvent(call);
+          break;
+        case StringeeClientEvents.incomingCall2:
+          StringeeCall2 call = map['body'];
+          handleIncomingCall2Event(call);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  void sendTokenToServer() {
+    if (Platform.isAndroid) {
+      FirebaseMessaging.instance.getToken().then((token) {
+        print("fcm token: $token");
+        _client
+            .registerPush(token!)
+            .then((value) => print('Register push ' + value['message']));
+      });
+    } else {}
   }
 
   handleDidConnectEvent() {}
