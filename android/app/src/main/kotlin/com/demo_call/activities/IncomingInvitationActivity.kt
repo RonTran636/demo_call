@@ -133,7 +133,7 @@ class IncomingInvitationActivity : Activity() {
 
 fun ImageView.loadImage(url: String?) {
     val option = RequestOptions()
-        .error(R.drawable.ic_avatar_default)
+        .error(R.drawable.avatar_test_2)
     Glide.with(this.context)
         .setDefaultRequestOptions(option)
         .load(url)

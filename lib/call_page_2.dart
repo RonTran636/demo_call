@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:demo_call/meeting_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +181,9 @@ class _CallPageState extends State<CallPage> {
 
   /// Invoked when get Signaling state
   void handleSignalingStateChangeEvent(StringeeSignalingState state) {
-    print('handleSignalingStateChangeEvent - $state');
+    if (state ==  StringeeSignalingState.answered){
+      Get.to(()=> MeetingPage());
+    }
   }
 
   /// Invoked when get Media state

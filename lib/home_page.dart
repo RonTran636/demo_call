@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
@@ -76,8 +77,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   connectToStringeeServer(String token) {
-    _client.connect(token).then((value) {
+    _client.connect(token).then((value) async {
       if (value['message'] == 'Success') {
+        //Send token to native
+        try {
+          final _payload = {
+            "token": token,
+          };
+          await tokenMethodChannel.invokeMethod("sendToken", _payload);
+        } on PlatformException catch (e) {
+          print('PlatformException: ' + e.toString());
+        } catch (ex) {
+          print('Exception: ' + ex.toString());
+        }
         setState(() {
           print(value);
           isConnected = true;
@@ -155,24 +167,6 @@ class _HomePageState extends State<HomePage> {
 
   /// Invoked when receive an incoming of StringeeCall
   void handleIncomingCallEvent(StringeeCall call) {
-    final _call = StringeeCall(_client);
-    _call.initAnswer().then((event) {
-      bool status = event['status'];
-      print("init answer status : ${event['status']}");
-      if (status) {
-        ///success
-      } else {
-        ///false
-      }
-    });
-    _call.answer().then((result) {
-      bool status = result['status'];
-      if (status) {
-        ///success
-      } else {
-        ///false
-      }
-    });
   }
 
   /// Invoked when receive an incoming of StringeeCall2
