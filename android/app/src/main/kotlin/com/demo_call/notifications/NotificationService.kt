@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -20,14 +21,12 @@ import androidx.core.app.NotificationManagerCompat
 import com.demo_call.CALL_STATE_ACCEPT
 import com.demo_call.CALL_STATE_REJECT
 import com.demo_call.R
-import com.demo_call.activities.CALL_CHANNEL_ID
-import com.demo_call.activities.CALL_CHANNEL_NAME
-import com.demo_call.activities.IncomingInvitationActivity
+import com.demo_call.activities.*
 import com.demo_call.utils.IntentUtils.putInfoExtra
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.demo_call.models.RequestCall
 import com.demo_call.models.StringeePayload
+import com.demo_call.utils.Common
 import com.demo_call.utils.IntentUtils.retrieveDataFromFcm
 import com.stringee.StringeeClient
 
@@ -41,15 +40,26 @@ class NotificationService : FirebaseMessagingService() {
         Log.d("NotificationService", "onMessageReceived: ${message.data}")
         if (message.data.isNotEmpty()) {
             val client = StringeeClient(this)
-            if (!client.isConnected) client.connect()
+            if (!client.isConnected)
+                if (Common.token.value == null){
+                    val dataSave = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    Handler(mainLooper).post{
+                        Common.token.value = dataSave.getString("token","")
+                        MainActivity().initAndConnectStringee(Common.token.value!!,client)
+                    }
+                }
             val stringeePayload = retrieveDataFromFcm<StringeePayload>(message)
             Log.d("TAG", "onMessageReceived: payload converted: $stringeePayload")
-            showCallNotification(
-                callId = stringeePayload.data.callID,
-                callerName = stringeePayload.data.from.alias,
-                photoUrl = null,
-                payload = stringeePayload
-            )
+            when (stringeePayload.data.callStatus) {
+                "started" -> showCallNotification(
+                    callId = stringeePayload.data.callID,
+                    callerName = stringeePayload.data.from.alias,
+                    photoUrl = null,
+                    payload = stringeePayload
+                )
+                "ended" -> cancelNotification(stringeePayload.data.callID.hashCode())
+            }
+
         }
         super.onMessageReceived(message)
     }

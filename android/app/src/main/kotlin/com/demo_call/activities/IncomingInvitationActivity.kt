@@ -21,11 +21,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.demo_call.*
 import com.demo_call.databinding.ActivityIncomingInvitationBinding
-import com.studyguide.mightyid.*
 import com.demo_call.notifications.NotificationReceiver
 import com.demo_call.utils.IntentUtils.getInfoExtra
 import com.demo_call.utils.IntentUtils.putInfoExtra
-import com.demo_call.models.RequestCall
 import com.demo_call.models.StringeePayload
 
 class IncomingInvitationActivity : Activity() {

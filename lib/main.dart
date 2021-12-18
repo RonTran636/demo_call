@@ -1,11 +1,15 @@
+import 'package:demo_call/constant.dart';
 import 'package:demo_call/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'meeting_page.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  _setupNavigateFromNative();
   runApp(const MyApp());
 }
 
@@ -33,4 +37,12 @@ class MyApp extends StatelessWidget {
       home: const HomePage(),
     );
   }
+}
+
+_setupNavigateFromNative(){
+  navigateMethodChannel.setMethodCallHandler((call) async{
+    if (call.method == "navigateToCall") {
+      Get.to(()=> MeetingPage());
+    }
+  });
 }

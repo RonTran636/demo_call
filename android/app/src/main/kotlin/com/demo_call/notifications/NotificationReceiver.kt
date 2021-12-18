@@ -5,39 +5,41 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.demo_call.*
+import com.demo_call.activities.MainActivity
 import com.demo_call.activities.cancelNotification
 import com.demo_call.utils.IntentUtils.getInfoExtra
-import com.demo_call.models.RequestCall
 import com.demo_call.models.StringeePayload
+import com.demo_call.utils.Common
 import com.stringee.StringeeClient
 import com.stringee.call.StringeeCall
-import com.stringee.call.StringeeCall2
 
 
 class NotificationReceiver : BroadcastReceiver() {
 
+    private lateinit var stringeeCall: StringeeCall
 
     override fun onReceive(context: Context, intent: Intent) {
         val payload = intent.getInfoExtra<StringeePayload>(CALL_PAYLOAD)
-        val callId = intent.getStringExtra(CALL_ID)
-        val client = StringeeClient(context)
-        val callerUserId = payload.data.from.alias
-        val calleeUserId = payload.data.to.alias
-        val stringeeCall = StringeeCall(client, calleeUserId, callerUserId)
         when (intent.action) {
             CALL_STATE_ACCEPT, ACTION_CALL_ACCEPT -> {
                 Log.d("NotificationReceiver", "onReceive: CALL_STATE_ACCEPT, payload: $payload")
-                context.cancelNotification(callId.hashCode())
+                context.cancelNotification(payload.data.callID.hashCode())
                 // Handle connect call in Android's side
-                print(stringeeCall.callId)
 
+                MainActivity.navigateKey.value = "navigateToCall"
+                Log.d("TAG", "onReceive: navigate key: ${MainActivity.navigateKey.value}")
+                stringeeCall = Common.maps[payload.data.callID]!!
                 stringeeCall.answer()
+                val mIntent = Intent(context,MainActivity::class.java)
+                mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(mIntent)
             }
 
             CALL_STATE_REJECT, ACTION_CALL_REJECT -> {
                 Log.d("NotificationReceiver", "onReceive: CALL_STATE_REJECT, payload: $payload")
-                context.cancelNotification(callId.hashCode())
+                context.cancelNotification(payload.data.callID.hashCode())
                 // Handle reject call
+                stringeeCall = Common.maps[payload.data.callID]!!
                 stringeeCall.reject()
             }
         }
